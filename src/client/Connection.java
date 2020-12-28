@@ -9,6 +9,9 @@ public class Connection {
 	private int port;
 	private Socket socket;
 	private DataInputStream socketIn;
+	// サーバから受け取った値を格納し、0であればインターホンが押されたことを意味する
+	private int exitStatus = 1;
+	// エラーが発生した場合にGUIで表示するテキスト
 	private String errorStatus;
 	private boolean successfulConnection = false;
 
@@ -25,9 +28,14 @@ public class Connection {
 		return successfulConnection;
 	}
 
+	public boolean isDoorbellPressed() {
+		return exitStatus == 0 ? true : false;
+	}
+
 	public void connect() {
 		socket = new Socket();
 		try {
+			// タイムアウト値の単位はミリ秒
 			socket.connect(new InetSocketAddress(address, port), 2000);
 			successfulConnection = true;
 			System.out.println("Connected to port " + port + " at " + address);
@@ -48,5 +56,14 @@ public class Connection {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public void receive() {
+		try {
+			exitStatus = socketIn.readInt();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("Exit status : " + exitStatus);
 	}
 }
