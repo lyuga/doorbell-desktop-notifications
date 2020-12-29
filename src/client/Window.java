@@ -46,6 +46,7 @@ public class Window extends JFrame implements ActionListener {
 		// Panels間において共通のSettingsインスタンスを参照するため、引数として渡す
 		Settings settings = new Settings();
 		SettingsPanel sp = new SettingsPanel(this, settings);
+		MonitoringPanel mp = new MonitoringPanel(this, settings);
 	}
 
 	public void actionPerformed(ActionEvent e) {
