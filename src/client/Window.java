@@ -42,6 +42,10 @@ public class Window extends JFrame implements ActionListener {
 			((AbstractButton) button.getValue()).setActionCommand((String) button.getKey());
 			((JComponent) button.getValue()).setFont(new Font("メイリオ", Font.PLAIN, 40));
 		}
+
+		// Panels間において共通のSettingsインスタンスを参照するため、引数として渡す
+		Settings settings = new Settings();
+		SettingsPanel sp = new SettingsPanel(this, settings);
 	}
 
 	public void actionPerformed(ActionEvent e) {
