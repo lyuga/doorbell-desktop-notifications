@@ -8,6 +8,7 @@ import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingWorker;
 
 public class MonitoringPanel extends JPanel {
 	private Window window;
@@ -19,6 +20,7 @@ public class MonitoringPanel extends JPanel {
 	private JButton[] buttons;
 	private JLabel statusLabel;
 	private Connection conn;
+	private MonitoringTask monitoringTask;
 
 	public MonitoringPanel(Window window, Settings settings) {
 		this.window = window;
@@ -63,6 +65,30 @@ public class MonitoringPanel extends JPanel {
 		repaint();
 	}
 
+	class MonitoringTask extends SwingWorker<Void, Void> {
+		protected Void doInBackground() {
+			conn.connect();
+			conn.receive();
+			return null;
+		}
+
+		@Override
+		protected void done() {
+			if (conn.hasSuccessfulConnection()) {
+				if (conn.isDoorbellPressed()) {
+					statusLabel.setText("インターホンが押されました");
+				} else {
+					statusLabel.setText("センサに異常があります");
+				}
+				setSelectedButtonsEnabled(new JButton[] { confirmButton });
+			} else {
+				statusLabel.setText(conn.getErrorStatus());
+				setSelectedButtonsEnabled(new JButton[] { settingsButton, startButton });
+			}
+			window.bringWindowToFront();
+		}
+	}
+
 	class ConnectAction extends AbstractAction {
 		ConnectAction() {
 			putValue(Action.NAME, "モニタ開始");
@@ -70,7 +96,12 @@ public class MonitoringPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
+			conn = new Connection(settings.getAddress(), settings.getPort());
+			monitoringTask = new MonitoringTask();
+			setSelectedButtonsEnabled(new JButton[] { stopButton });
+			statusLabel.setText("インターホンのモニタ中...");
+			statusLabel.paintImmediately(statusLabel.getVisibleRect());
+			monitoringTask.execute();
 		}
 	}
 
@@ -81,7 +112,15 @@ public class MonitoringPanel extends JPanel {
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			if (monitoringTask != null && !monitoringTask.isDone()) {
+				monitoringTask.cancel(true);
+			}
+			monitoringTask = null;
 
+			conn.disconnect();
+
+			setSelectedButtonsEnabled(new JButton[] { settingsButton, startButton });
+			statusLabel.setText("モニタが中止されました");
 		}
 	}
 
