@@ -67,15 +67,4 @@ public class Window extends JFrame implements ActionListener {
 	private void addCard(JPanel card, String constraints) {
 		cards.add(card, constraints);
 	}
-
-	// サーバからインターホンの通知を受け取った際、アプリケーションのウィンドウを前面に出す
-	public void bringWindowToFront() {
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				toFront();
-				repaint();
-			}
-		});
-	}
 }

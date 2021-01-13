@@ -7,8 +7,10 @@ import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 
 public class MonitoringPanel extends JPanel {
@@ -85,7 +87,7 @@ public class MonitoringPanel extends JPanel {
 				statusLabel.setText(conn.getErrorStatus());
 				setSelectedButtonsEnabled(new JButton[] { settingsButton, startButton });
 			}
-//			window.bringWindowToFront();
+			bringObtainedWindowToFront();
 		}
 	}
 
@@ -135,5 +137,17 @@ public class MonitoringPanel extends JPanel {
 			statusLabel.setText("確認されました");
 			conn.disconnect();
 		}
+	}
+
+	// サーバからインターホンの通知を受け取った際、アプリケーションのウィンドウを前面に出す
+	private void bringObtainedWindowToFront() {
+		JFrame window = (JFrame) SwingUtilities.getWindowAncestor(this);
+		java.awt.EventQueue.invokeLater(new Runnable() {
+			@Override
+			public void run() {
+				window.toFront();
+				window.repaint();
+			}
+		});
 	}
 }
