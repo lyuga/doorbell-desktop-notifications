@@ -2,6 +2,7 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Map;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -10,12 +11,14 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 public class SettingsPanel extends JPanel implements ActionListener {
+	private Map cardButtonMap;
 	private Settings settings;
-	private JButton toMonitoringButton;
+	private JButton monitoringButton;
 	private JTextField addressField;
 	private JTextField portField;
 
-	public SettingsPanel(Window window, Settings settings) {
+	public SettingsPanel(Map cardButtonMap, Settings settings) {
+		this.cardButtonMap = cardButtonMap;
 		this.settings = settings;
 
 		JPanel fields = new JPanel();
@@ -29,14 +32,12 @@ public class SettingsPanel extends JPanel implements ActionListener {
 		portField.setBorder(new TitledBorder("Port"));
 		fields.add(portField);
 
-		toMonitoringButton = window.getNavigationButton("monitoring");
-		toMonitoringButton.addActionListener(this);
+		monitoringButton = (JButton) cardButtonMap.get("monitoring");
+		monitoringButton.addActionListener(this);
 
 		setLayout(new BorderLayout());
 		add(fields, BorderLayout.CENTER);
-		add(toMonitoringButton, BorderLayout.SOUTH);
-
-		window.addCard(this, "settings");
+		add(monitoringButton, BorderLayout.SOUTH);
 	}
 
 	@Override

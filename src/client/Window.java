@@ -45,8 +45,10 @@ public class Window extends JFrame implements ActionListener {
 
 		// Panels間において共通のSettingsインスタンスを参照するため、引数として渡す
 		Settings settings = new Settings();
-		SettingsPanel sp = new SettingsPanel(this, settings);
-		MonitoringPanel mp = new MonitoringPanel(this, settings);
+		SettingsPanel sp = new SettingsPanel(buttonMap, settings);
+		MonitoringPanel mp = new MonitoringPanel(buttonMap, settings);
+		addCard(sp, "settings");
+		addCard(mp, "monitoring");
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -62,18 +64,7 @@ public class Window extends JFrame implements ActionListener {
 		}
 	}
 
-	public void addCard(JPanel card, String constraints) {
+	private void addCard(JPanel card, String constraints) {
 		cards.add(card, constraints);
-	}
-
-	// サーバからインターホンの通知を受け取った際、アプリケーションのウィンドウを前面に出す
-	public void bringWindowToFront() {
-		java.awt.EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				toFront();
-				repaint();
-			}
-		});
 	}
 }
